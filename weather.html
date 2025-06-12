@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    input {
+      width: 80%;
+      padding: 0.6rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.6rem 1rem;
+      background: #0077ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      margin-left: 0.5rem;
+      cursor: pointer;
+    }
+
+    .weather {
+      margin-top: 1.5rem;
+    }
+
+    .weather img {
+      width: 80px;
+      height: 80px;
+    }
+
+    .error {
+      color: red;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Weather App 🌦️</h2>
+    <input type="text" id="cityInput" placeholder="Enter city name" />
+    <button onclick="getWeather()">Check</button>
+    <div class="weather" id="weatherInfo"></div>
+    <p class="error" id="errorMsg"></p>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const city = document.getElementById("cityInput").value.trim();
+      const apiKey = "e9d3eaf345fa19d276c3d97ad55a2e7b"; 
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      const weatherInfo = document.getElementById("weatherInfo");
+      const errorMsg = document.getElementById("errorMsg");
+      weatherInfo.innerHTML = "";
+      errorMsg.textContent = "";
+
+      if (!city) {
+        errorMsg.textContent = "Please enter a city name!";
+      return;
+      }
+
+      try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("City not found");
+
+      const data = await response.json();
+      const icon = data.weather[0].icon;
+      const desc = data.weather[0].description;
+      const temp = data.main.temp;
+
+      weatherInfo.innerHTML = `
+      <h3>${data.name}</h3>
+      <img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="${desc}" />
+      <p><strong>${temp}°C</strong></p>
+      <p>${desc}</p>
+    `;
+     } catch (err) {
+       errorMsg.textContent = err.message;
+     }
+    }
+  </script>
+</body>
+</html>
